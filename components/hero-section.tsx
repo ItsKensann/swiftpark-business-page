@@ -57,7 +57,7 @@ export function HeroSection() {
             className="flex flex-col sm:flex-row items-center gap-3 mt-8"
           >
             <a
-              href="#demo"
+              href="#book"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors shadow-sm"
             >
               Request a Demo

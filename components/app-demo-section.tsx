@@ -44,8 +44,12 @@ function Screen({ src, alt, label, description, index }: ScreenProps) {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Image placeholder */}
-        <div className="relative bg-muted overflow-hidden">
-          <img src={src} alt={alt} className="w-full h-auto block" />
+        <div className="relative bg-muted overflow-hidden aspect-[9/19]">
+          <img
+            src={src}
+            alt={alt}
+            className="absolute inset-0 w-full h-full object-cover object-top"
+          />
           {/* Shine effect on scroll */}
           <motion.div
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
@@ -78,21 +82,21 @@ const screens = [
   },
   {
     src: "/screen-2.png",
-    alt: "SwiftPark map view",
-    label: "Navigate to Your Spot",
-    description: "Turn-by-turn directions to open spaces",
+    alt: "SwiftPark parking location information",
+    label: "Detailed Parking Information",
+    description: "View metrics of selected parking location",
   },
   {
     src: "/screen-3.png",
-    alt: "SwiftPark spot details",
-    label: "Reserve Instantly",
-    description: "One tap to secure your parking spot",
+    alt: "SwiftPark 3D parking view",
+    label: "3D Parking Lot View",
+    description: "Locate closest available parking spot",
   },
   {
     src: "/screen-4.png",
-    alt: "SwiftPark confirmation",
-    label: "Park with Confidence",
-    description: "QR code entry and seamless payment",
+    alt: "SwiftPark map view",
+    label: "Navigate to Your Spot",
+    description: "Turn by turn directions to open spaces",
   },
 ];
 
