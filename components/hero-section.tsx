@@ -22,7 +22,7 @@ export function HeroSection() {
   return (
     <section
       ref={ref}
-      className="pt-28 pb-20 md:pt-36 md:pb-28 px-6 bg-white overflow-hidden"
+      className="pt-28 pb-20 md:pt-36 md:pb-28 px-6 bg-white overflow-hidden mb-40 mt-12"
     >
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col items-center text-center max-w-35l mx-auto mb-14">
