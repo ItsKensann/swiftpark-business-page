@@ -50,7 +50,7 @@ export function AiIntelligenceSection() {
         }}
       />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-6 lg:grid-cols-[0.82fr_1.18fr]">
         <motion.div
           variants={fadeIn}
           initial="hidden"

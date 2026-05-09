@@ -53,26 +53,42 @@ export function CameraDetectionDemo({
           </div>
         </div>
 
-        <div className="relative aspect-video bg-black">
+        <div className="relative aspect-video bg-slate-950">
+          {/* Non-blocking skeleton sits BEHIND the video. As soon as the browser
+              paints the first frame the Brighton footage covers it naturally. */}
+          <div
+            aria-hidden
+            className={`pointer-events-none absolute inset-0 transition-opacity duration-500 ${
+              videoLoaded ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900" />
+            <div
+              className="absolute inset-0 opacity-[0.08] animate-pulse"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+                backgroundSize: "32px 32px",
+              }}
+            />
+            <div className="absolute bottom-3 left-3 font-mono text-[10px] text-slate-500">
+              Loading live feed…
+            </div>
+          </div>
+
           <video
             src={videoSrc}
             autoPlay
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="auto"
             onLoadedData={() => setVideoLoaded(true)}
+            onCanPlay={() => setVideoLoaded(true)}
+            onPlaying={() => setVideoLoaded(true)}
             className="absolute inset-0 h-full w-full object-cover"
             aria-label="Live parking camera detection clip"
           />
-
-          {!videoLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-950">
-              <div className="font-mono text-sm text-slate-500">
-                Loading live feed...
-              </div>
-            </div>
-          )}
 
           <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-lg border border-white/10 bg-black/55 px-3 py-1.5 backdrop-blur">
             <RadioTower className="h-3.5 w-3.5 text-blue-300" />
@@ -91,13 +107,6 @@ export function CameraDetectionDemo({
             YOLO · detecting
           </div>
 
-          <div className="pointer-events-none absolute bottom-3 left-3 right-3 flex items-end justify-between">
-            <div className="rounded-lg border border-white/10 bg-black/55 px-2.5 py-1.5 backdrop-blur">
-              <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-slate-400">
-                Existing camera · zero new hardware
-              </p>
-            </div>
-          </div>
         </div>
 
         <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 bg-slate-950">
