@@ -1,7 +1,20 @@
 "use client";
 
 import type { ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+
+const Lot3DMini = dynamic(
+  () => import("@/components/lot-3d-mini").then((m) => m.Lot3DMini),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="absolute inset-0 flex items-center justify-center text-[9px] font-medium text-slate-400">
+        Loading 3D lot…
+      </div>
+    ),
+  },
+);
 import {
   ArrowUpRight,
   Camera,
@@ -371,91 +384,9 @@ export function DetailScreen() {
 }
 
 /* ---------------------------------------------------------------------------
- * 3. Spot picker — 3D-style isometric lot with car models
+ * 3. Spot picker — real 3D lot rendered with three.js + GLB cars
  * ------------------------------------------------------------------------ */
-function CarModel({
-  tone = "occupied",
-  delay = 0,
-}: {
-  tone?: "occupied" | "selected";
-  delay?: number;
-}) {
-  const fill =
-    tone === "selected"
-      ? "from-blue-500 to-blue-700"
-      : "from-slate-500 to-slate-700";
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -4 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
-      className="absolute inset-1 flex flex-col gap-[1px]"
-    >
-      {/* roof */}
-      <div className={`h-[42%] rounded-[3px] bg-gradient-to-b ${fill} shadow-md`} />
-      {/* windshield */}
-      <div className="mx-1 h-[10%] rounded-sm bg-cyan-200/40" />
-      {/* hood */}
-      <div className={`h-[42%] rounded-[3px] bg-gradient-to-b ${fill} shadow-md`} />
-      {/* headlights */}
-      <div className="absolute bottom-0.5 left-1/2 flex -translate-x-1/2 gap-0.5">
-        <span className="h-0.5 w-1.5 rounded-sm bg-amber-200/80" />
-        <span className="h-0.5 w-1.5 rounded-sm bg-amber-200/80" />
-      </div>
-    </motion.div>
-  );
-}
-
-function Stall({
-  state,
-  delay,
-}: {
-  state: "open" | "occupied" | "selected";
-  delay: number;
-}) {
-  const tint =
-    state === "selected"
-      ? "bg-blue-500/20 ring-2 ring-blue-500"
-      : state === "occupied"
-        ? "bg-slate-200/60"
-        : "bg-emerald-400/15 ring-1 ring-emerald-400/40";
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.92 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.35, delay }}
-      className={`relative aspect-[3/5] rounded-md ${tint}`}
-    >
-      {/* parking lines */}
-      <span className="absolute inset-y-0 left-0 w-px bg-white/70" />
-      <span className="absolute inset-y-0 right-0 w-px bg-white/70" />
-      <span className="absolute inset-x-0 bottom-0 h-px bg-white/70" />
-      {state === "occupied" && <CarModel tone="occupied" delay={delay + 0.05} />}
-      {state === "selected" && (
-        <>
-          <CarModel tone="selected" delay={delay + 0.05} />
-          <motion.span
-            initial={{ y: -3, opacity: 0 }}
-            animate={{ y: -7, opacity: 1 }}
-            transition={{ duration: 0.4, delay: delay + 0.2 }}
-            className="absolute -top-3 left-1/2 -translate-x-1/2 rounded bg-blue-600 px-1 py-0.5 text-[7px] font-black text-white shadow-md"
-          >
-            S02
-          </motion.span>
-        </>
-      )}
-    </motion.div>
-  );
-}
-
 export function SpotPickerScreen() {
-  // 0 = open, 1 = occupied, 2 = selected
-  const rowA = [1, 0, 1, 0, 1, 0, 1] as const;
-  const rowB = [0, 1, 0, 2, 0, 1, 0] as const;
-
-  const stateOf = (n: 0 | 1 | 2): "open" | "occupied" | "selected" =>
-    n === 0 ? "open" : n === 1 ? "occupied" : "selected";
-
   return (
     <div className="flex h-full flex-col bg-gradient-to-b from-[#eef4ff] via-white to-[#f8fafc] text-slate-950">
       <StatusBar />
@@ -463,11 +394,11 @@ export function SpotPickerScreen() {
 
       <div className="mx-4 mt-3 flex items-center justify-around rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
         <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-600">
-          <span className="h-2 w-2 rounded-sm bg-emerald-400/70 ring-1 ring-emerald-400" />
+          <span className="h-2 w-2 rounded-sm bg-blue-100 ring-1 ring-blue-600" />
           Open
         </div>
         <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-600">
-          <span className="h-2 w-2 rounded-sm bg-slate-300" />
+          <span className="h-2 w-2 rounded-sm bg-rose-100 ring-1 ring-red-400" />
           Occupied
         </div>
         <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-600">
@@ -477,71 +408,38 @@ export function SpotPickerScreen() {
       </div>
 
       <div className="flex-1 px-4 pt-3">
-        <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-100 via-slate-50 to-white p-3 shadow-sm">
-          <div className="mb-2 flex items-center justify-between">
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-100 via-slate-50 to-white shadow-sm">
+          <div className="flex items-center justify-between px-3 pt-3">
             <p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
               Lower Lot · Zone 1
             </p>
-            <p className="text-[9px] font-bold text-emerald-600">8 open</p>
+            <p className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-1.5 py-0.5 text-[8px] font-bold text-blue-700">
+              <span className="h-1 w-1 rounded-full bg-blue-600" />
+              3D View
+            </p>
           </div>
 
-          {/* 3D scene */}
-          <div
-            className="mx-auto"
-            style={{ perspective: "700px", perspectiveOrigin: "50% 30%" }}
-          >
-            <div
-              className="relative"
-              style={{
-                transform: "rotateX(38deg) rotateZ(-2deg)",
-                transformStyle: "preserve-3d",
-              }}
+          {/* Real WebGL lot scene */}
+          <div className="relative mt-1 aspect-[5/3] w-full">
+            <Lot3DMini />
+            {/* subtle top vignette to blend renderer into the card */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-white/60 to-transparent" />
+            <motion.span
+              initial={{ y: -2, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.6 }}
+              className="pointer-events-none absolute right-3 top-2 inline-flex items-center gap-1 rounded-full bg-blue-600 px-1.5 py-0.5 text-[8px] font-black text-white shadow-md"
             >
-              {/* asphalt */}
-              <div className="absolute -inset-2 rounded-lg bg-gradient-to-b from-slate-300 to-slate-200" />
-
-              <div className="relative space-y-2">
-                {/* row A - facing center */}
-                <div className="grid grid-cols-7 gap-1">
-                  {rowA.map((state, idx) => (
-                    <Stall
-                      key={`a-${idx}`}
-                      state={stateOf(state)}
-                      delay={idx * 0.04}
-                    />
-                  ))}
-                </div>
-
-                {/* aisle with arrow */}
-                <div className="relative flex h-3 items-center">
-                  <div className="h-px flex-1 bg-slate-400/70" />
-                  <span className="mx-2 text-[8px] font-bold tracking-widest text-slate-400">
-                    AISLE
-                  </span>
-                  <div className="h-px flex-1 bg-slate-400/70" />
-                </div>
-
-                {/* row B */}
-                <div className="grid grid-cols-7 gap-1">
-                  {rowB.map((state, idx) => (
-                    <Stall
-                      key={`b-${idx}`}
-                      state={stateOf(state)}
-                      delay={0.3 + idx * 0.04}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* entrance arrow */}
-              <div className="mt-2 flex items-center justify-center gap-1 text-[8px] font-bold text-slate-500">
-                <span className="text-blue-600">▲</span> ENTRANCE
-              </div>
-            </div>
+              S02
+            </motion.span>
           </div>
 
-          {/* perspective overlay highlight */}
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_25%,rgba(37,99,235,0.10),transparent_60%)]" />
+          <div className="flex items-center justify-between px-3 pb-3 pt-1 text-[9px] font-medium text-slate-500">
+            <span className="flex items-center gap-1">
+              <span className="text-blue-600">▲</span> ENTRANCE
+            </span>
+            <span className="font-bold text-emerald-600">8 open</span>
+          </div>
         </div>
 
         <div className="mt-3 rounded-xl border border-blue-200 bg-blue-50/70 px-3 py-2.5 shadow-sm">
@@ -554,11 +452,10 @@ export function SpotPickerScreen() {
                 Spot S02 · Zone 1
               </p>
             </div>
-            <p className="text-right text-[9px] font-medium text-slate-500">
-              ~2 min
-              <br />
-              walk
-            </p>
+            <span className="inline-flex items-center gap-1 rounded-full bg-blue-600 px-2 py-1 text-[9px] font-bold text-white shadow-sm">
+              <Navigation className="h-2.5 w-2.5" />
+              Route ready
+            </span>
           </div>
         </div>
       </div>

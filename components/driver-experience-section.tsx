@@ -2,7 +2,7 @@
 
 import { type ComponentType, type ReactNode, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { Search } from "lucide-react";
+import { Navigation as NavigationIcon, RefreshCw, Search } from "lucide-react";
 import {
   ConfirmationScreen,
   DetailScreen,
@@ -242,6 +242,57 @@ export function DriverExperienceSection() {
                     </motion.div>
                   </AnimatePresence>
                 </PhoneFrame>
+
+                {/* Supporting callouts — positioned well outside the phone frame
+                    on xl+ only, hidden on smaller breakpoints to never overlap. */}
+                <motion.div
+                  aria-hidden
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0, y: [0, -6, 0] }}
+                  transition={{
+                    opacity: { duration: 0.5, delay: 0.3 },
+                    x: { duration: 0.5, delay: 0.3 },
+                    y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+                  }}
+                  className="pointer-events-none absolute top-12 z-30 hidden w-[200px] rounded-xl border border-slate-200 bg-white/95 px-4 py-3 shadow-xl shadow-slate-950/10 backdrop-blur xl:block"
+                  style={{ left: "calc(100% + 28px)" }}
+                >
+                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
+                    <NavigationIcon className="h-4 w-4 text-blue-600" />
+                    Live guidance
+                  </div>
+                  <p className="mt-1 text-xs text-slate-500">
+                    Updates as occupancy changes
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  aria-hidden
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0, y: [0, 5, 0] }}
+                  transition={{
+                    opacity: { duration: 0.5, delay: 0.45 },
+                    x: { duration: 0.5, delay: 0.45 },
+                    y: {
+                      duration: 4.5,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 0.4,
+                    },
+                  }}
+                  className="pointer-events-none absolute bottom-16 z-30 hidden w-[200px] rounded-xl border border-slate-200 bg-white/95 px-4 py-3 shadow-xl shadow-slate-950/10 backdrop-blur xl:block"
+                  style={{ right: "calc(100% + 28px)" }}
+                >
+                  <div className="flex items-center gap-2">
+                    <RefreshCw className="h-4 w-4 text-blue-600" />
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
+                      Synced
+                    </p>
+                  </div>
+                  <p className="mt-1 text-sm font-bold text-slate-950">
+                    Operator view updated
+                  </p>
+                </motion.div>
               </div>
             </div>
           </div>
