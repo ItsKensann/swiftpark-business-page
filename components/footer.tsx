@@ -1,26 +1,37 @@
-import { ParkingSquare } from "lucide-react";
+const footerLinks = [
+  { label: "Drivers", href: "#driver" },
+  { label: "AI", href: "#ai" },
+  { label: "Operators", href: "#dashboard" },
+  { label: "Book Demo", href: "#book" },
+];
 
 export function Footer() {
   return (
-    <footer className="py-8 px-6 bg-white border-t border-border">
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <img src="/icon.svg" alt="SwiftPark" className="w-8 h-8" />
+    <footer className="border-t border-slate-200 bg-slate-950 px-6 py-10 text-white">
+      <div className="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-center gap-3">
+          <img src="/icon.svg" alt="SwiftPark" className="h-9 w-9" />
           <div>
-            <span className="text-sm font-semibold text-foreground">
-              SwiftPark
-            </span>
-            <span className="block text-xs text-muted-foreground leading-none mt-0.5">
+            <span className="text-base font-black">SwiftPark</span>
+            <span className="block text-sm text-slate-400">
               Stress less. Park better.
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
-          <span className="text-xs text-muted-foreground">
-            © 2026 SwiftPark
-          </span>
-        </div>
+        <nav className="flex flex-wrap gap-4 text-sm text-slate-400">
+          {footerLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="transition hover:text-white"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="text-sm text-slate-500">Copyright 2026 SwiftPark</div>
       </div>
     </footer>
   );

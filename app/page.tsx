@@ -1,10 +1,11 @@
 import { Navbar } from "@/components/navbar";
 import { HeroSection } from "@/components/hero-section";
-import { AppDemoSection } from "@/components/app-demo-section";
-import { ProblemSection } from "@/components/problem-section";
+import { DriverExperienceSection } from "@/components/driver-experience-section";
+import { AiIntelligenceSection } from "@/components/ai-intelligence-section";
+import { FacilityTypesSection } from "@/components/facility-types-section";
+import { OperatorDashboardSection } from "@/components/operator-dashboard-section";
 import { HowItWorksSection } from "@/components/how-it-works-section";
 import { BookMeetingSection } from "@/components/book-meeting-section";
-import { CtaSection } from "@/components/cta-section";
 import { Footer } from "@/components/footer";
 
 export default function HomePage() {
@@ -12,13 +13,12 @@ export default function HomePage() {
     <main>
       <Navbar />
       <HeroSection />
-      <AppDemoSection />
-      <ProblemSection />
+      <DriverExperienceSection />
+      <AiIntelligenceSection />
+      <FacilityTypesSection />
+      <OperatorDashboardSection />
       <HowItWorksSection />
       <BookMeetingSection />
-      {/* <TractionBar /> */}
-      <AppDemoSection />
-      <CtaSection />
       <Footer />
     </main>
   );
