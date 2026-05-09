@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import {
   Activity,
   AlertTriangle,
@@ -46,7 +46,20 @@ const cameraGrid = [
   { id: "Cam 06", zone: "Entrance" },
 ];
 
-const chartHeights = [36, 52, 64, 86, 78, 62, 44, 32];
+const utilization = [
+  { label: "8a", value: 42 },
+  { label: "9a", value: 55 },
+  { label: "10a", value: 68 },
+  { label: "11a", value: 76 },
+  { label: "12p", value: 88 },
+  { label: "1p", value: 82 },
+  { label: "2p", value: 74 },
+  { label: "3p", value: 61 },
+];
+const peakUtilization = utilization.reduce(
+  (max, point) => (point.value > max.value ? point : max),
+  utilization[0],
+);
 
 const alerts = [
   { tone: "amber", text: "Zone 3 nearing capacity", time: "2m ago" },
@@ -57,6 +70,7 @@ const alerts = [
 export function OperatorDashboardSection() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-120px" });
+  const prefersReducedMotion = useReducedMotion();
 
   return (
     <section id="dashboard" ref={ref} className="relative overflow-hidden bg-white py-24 md:py-32">
@@ -89,7 +103,23 @@ export function OperatorDashboardSection() {
         >
           <div className="absolute -inset-6 rounded-3xl bg-blue-500/10 blur-3xl" />
 
-          <div className="relative overflow-hidden rounded-xl border border-slate-800 bg-slate-950 shadow-2xl shadow-slate-950/30">
+          <motion.div
+            animate={
+              prefersReducedMotion
+                ? undefined
+                : { y: [0, -5, 0, 4, 0] }
+            }
+            transition={
+              prefersReducedMotion
+                ? undefined
+                : {
+                    duration: 9,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }
+            }
+            className="group relative overflow-hidden rounded-xl border border-slate-800 bg-slate-950 shadow-2xl shadow-slate-950/30 transition-shadow duration-500 hover:shadow-[0_30px_80px_-20px_rgba(37,99,235,0.35)]"
+          >
             <div className="flex items-center gap-3 border-b border-white/10 bg-slate-900 px-4 py-3">
               <div className="flex gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
@@ -228,31 +258,123 @@ export function OperatorDashboardSection() {
                       transition={{ duration: 0.55, delay: 0.45 }}
                       className="rounded-lg border border-white/10 bg-white/[0.04] p-5"
                     >
-                      <div className="mb-5 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                          <BarChart3 className="h-4 w-4 text-blue-300" />
-                          Utilization analytics
-                        </div>
-                        <span className="rounded-full bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-slate-400">
-                          Today · hourly
-                        </span>
-                      </div>
-                      <div className="flex h-48 items-end gap-3">
-                        {chartHeights.map((height, index) => (
-                          <div key={index} className="flex flex-1 flex-col items-center gap-2">
-                            <motion.div
-                              initial={{ height: 0 }}
-                              animate={inView ? { height: `${height}%` } : { height: 0 }}
-                              transition={{
-                                duration: 0.7,
-                                ease: [0.22, 1, 0.36, 1],
-                                delay: 0.5 + index * 0.05,
-                              }}
-                              className="w-full rounded-t bg-gradient-to-t from-blue-600 to-cyan-300"
-                            />
-                            <span className="text-[10px] text-slate-500">{index + 8}</span>
+                      <div className="mb-4 flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                            <BarChart3 className="h-4 w-4 text-blue-300" />
+                            Utilization analytics
                           </div>
-                        ))}
+                          <p className="mt-0.5 text-[10px] text-slate-500">
+                            Brighton Ski Resort · today · hourly
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2 py-0.5 text-[10px] font-bold text-blue-200">
+                            <span className="h-1.5 w-1.5 rounded-full bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.8)]" />
+                            Peak {peakUtilization.value}% · {peakUtilization.label.replace("p", " PM").replace("a", " AM")}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="relative pl-6">
+                        {/* Y-axis labels */}
+                        <div className="absolute left-0 top-0 flex h-44 flex-col justify-between text-[9px] font-medium text-slate-600">
+                          <span>100%</span>
+                          <span>75%</span>
+                          <span>50%</span>
+                          <span>25%</span>
+                          <span>0%</span>
+                        </div>
+
+                        {/* Chart frame: grid + bars share this box */}
+                        <div className="relative h-44">
+                          {/* Dashed gridlines */}
+                          {[0, 25, 50, 75, 100].map((y) => (
+                            <div
+                              key={y}
+                              className="absolute inset-x-0 border-t border-dashed border-white/[0.07]"
+                              style={{ top: `${100 - y}%` }}
+                            />
+                          ))}
+                          {/* Bars — each column is a relative box that stretches
+                              to the chart's full 176px; bars are absolute and
+                              anchored to bottom:0 so % heights resolve correctly. */}
+                          <div className="absolute inset-0 flex gap-2.5">
+                            {utilization.map((point, index) => {
+                              const isPeak = point.label === peakUtilization.label;
+                              return (
+                                <div
+                                  key={point.label}
+                                  className="relative flex-1"
+                                >
+                                  <motion.div
+                                    initial={{ height: "0%" }}
+                                    animate={
+                                      inView
+                                        ? { height: `${point.value}%` }
+                                        : { height: "0%" }
+                                    }
+                                    transition={{
+                                      duration: 0.75,
+                                      ease: [0.22, 1, 0.36, 1],
+                                      delay: 0.5 + index * 0.05,
+                                    }}
+                                    className={`absolute bottom-0 left-0 w-full rounded-t bg-gradient-to-t ${
+                                      isPeak
+                                        ? "from-blue-600 via-blue-500 to-cyan-200 shadow-[0_0_12px_rgba(59,130,246,0.45)]"
+                                        : "from-blue-600 to-cyan-300"
+                                    }`}
+                                  >
+                                    {/* dot marker at top of bar */}
+                                    <motion.span
+                                      initial={{ opacity: 0, scale: 0.6 }}
+                                      animate={
+                                        inView
+                                          ? { opacity: 1, scale: 1 }
+                                          : { opacity: 0, scale: 0.6 }
+                                      }
+                                      transition={{
+                                        duration: 0.4,
+                                        delay: 0.95 + index * 0.05,
+                                      }}
+                                      className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200 ring-2 ring-blue-500/50"
+                                    />
+                                    {/* peak value chip */}
+                                    {isPeak && (
+                                      <motion.span
+                                        initial={{ opacity: 0, y: 4 }}
+                                        animate={
+                                          inView
+                                            ? { opacity: 1, y: 0 }
+                                            : { opacity: 0, y: 4 }
+                                        }
+                                        transition={{
+                                          duration: 0.4,
+                                          delay: 1.1,
+                                        }}
+                                        className="absolute -top-5 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded bg-blue-500 px-1.5 py-0.5 text-[9px] font-black text-white shadow-md shadow-blue-500/40"
+                                      >
+                                        {point.value}%
+                                      </motion.span>
+                                    )}
+                                  </motion.div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* X-axis labels */}
+                        <div className="mt-2 flex gap-2.5">
+                          {utilization.map((point) => (
+                            <span
+                              key={`x-${point.label}`}
+                              className="flex-1 text-center text-[10px] font-medium text-slate-500"
+                            >
+                              {point.label}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </motion.div>
 
@@ -397,7 +519,7 @@ export function OperatorDashboardSection() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
