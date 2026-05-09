@@ -1,11 +1,12 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowUpRight,
+  Camera,
   CheckCircle2,
   ChevronLeft,
-  Circle,
   Clock,
   MapPin,
   Mountain,
@@ -15,6 +16,13 @@ import {
   Square,
   Wifi,
 } from "lucide-react";
+
+/* ---------------------------------------------------------------------------
+ * Shared SwiftPark mock-UI primitives
+ * Palette:   blue-600 (primary), emerald-500 (open), red-400 (occupied)
+ * Radius:    rounded-xl (cards) / rounded-full (badges) / rounded-lg (buttons)
+ * Type:      [9px] eyebrow / [11-12px] body / sm-lg headings
+ * ------------------------------------------------------------------------ */
 
 function StatusBar() {
   return (
@@ -31,6 +39,76 @@ function StatusBar() {
   );
 }
 
+function NavBar({
+  title,
+  eyebrow,
+  back = true,
+  trailing,
+}: {
+  title: string;
+  eyebrow?: string;
+  back?: boolean;
+  trailing?: ReactNode;
+}) {
+  return (
+    <div className="flex items-center justify-between px-4 pt-3">
+      {back ? (
+        <button
+          type="button"
+          aria-label="Back"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+      ) : (
+        <div className="h-8 w-8" />
+      )}
+      <div className="text-center">
+        {eyebrow && (
+          <p className="text-[9px] font-bold uppercase tracking-wider text-blue-600">
+            {eyebrow}
+          </p>
+        )}
+        <p className="text-[11px] font-bold text-slate-950">{title}</p>
+      </div>
+      <div className="flex h-8 w-8 items-center justify-center">{trailing}</div>
+    </div>
+  );
+}
+
+function LiveBadge({ tone = "emerald" }: { tone?: "emerald" | "white" }) {
+  const cls =
+    tone === "white"
+      ? "bg-white/20 text-white backdrop-blur"
+      : "bg-emerald-500/10 text-emerald-600";
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold ${cls}`}
+    >
+      <span
+        className={`h-1.5 w-1.5 rounded-full ${
+          tone === "white" ? "bg-emerald-300" : "bg-emerald-500"
+        }`}
+      />
+      LIVE
+    </span>
+  );
+}
+
+function PrimaryButton({ children }: { children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      className="flex h-10 w-full items-center justify-center gap-1.5 rounded-lg bg-blue-600 text-[12px] font-bold text-white shadow-md shadow-blue-600/25 transition"
+    >
+      {children}
+    </button>
+  );
+}
+
+/* ---------------------------------------------------------------------------
+ * 1. Map screen — Hero + Step 1
+ * ------------------------------------------------------------------------ */
 export function MapScreen() {
   return (
     <div className="flex h-full flex-col bg-[#eef4ff] text-slate-950">
@@ -83,12 +161,17 @@ export function MapScreen() {
             strokeLinecap="round"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
-            transition={{ duration: 2, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+            transition={{
+              duration: 2,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
           />
         </svg>
 
         <motion.div
-          className="absolute left-[44%] top-[28%] flex flex-col items-center"
+          className="absolute left-[44%] top-[26%] flex flex-col items-center"
           animate={{ y: [0, -3, 0] }}
           transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
         >
@@ -99,9 +182,14 @@ export function MapScreen() {
         </motion.div>
 
         <motion.div
-          className="absolute left-[18%] top-[58%] flex flex-col items-center"
+          className="absolute left-[16%] top-[58%] flex flex-col items-center"
           animate={{ y: [0, -3, 0] }}
-          transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+          transition={{
+            duration: 2.6,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.4,
+          }}
         >
           <div className="rounded-full border-2 border-white bg-emerald-500 px-2 py-1 text-[9px] font-bold text-white shadow-lg">
             OSU PS1 · 112
@@ -109,7 +197,7 @@ export function MapScreen() {
           <div className="mt-0.5 h-2 w-2 rotate-45 bg-emerald-500" />
         </motion.div>
 
-        <div className="absolute left-[68%] top-[64%] flex flex-col items-center opacity-80">
+        <div className="absolute left-[68%] top-[64%] flex flex-col items-center opacity-90">
           <div className="rounded-full border-2 border-white bg-amber-500 px-2 py-1 text-[9px] font-bold text-white shadow-md">
             Lot C · 6
           </div>
@@ -125,32 +213,36 @@ export function MapScreen() {
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-slate-200" />
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600">
+            <p className="text-[9px] font-bold uppercase tracking-wider text-blue-600">
               Nearby
             </p>
-            <p className="text-sm font-bold">3 facilities live</p>
+            <p className="text-[12px] font-bold text-slate-950">
+              3 facilities live
+            </p>
           </div>
-          <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-bold text-emerald-600">
-            ● LIVE
-          </span>
+          <LiveBadge />
         </div>
 
         <div className="mt-3 space-y-2">
-          <div className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50/60 px-3 py-2">
+          <div className="flex items-center justify-between rounded-xl border border-blue-200 bg-blue-50/60 px-3 py-2">
             <div className="flex items-center gap-2">
               <Mountain className="h-4 w-4 text-blue-600" />
               <div>
-                <p className="text-[11px] font-bold">Brighton Ski Resort</p>
+                <p className="text-[11px] font-bold text-slate-950">
+                  Brighton Ski Resort
+                </p>
                 <p className="text-[9px] text-slate-500">0.4 mi · Resort</p>
               </div>
             </div>
             <span className="text-[11px] font-black text-emerald-600">48</span>
           </div>
-          <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2">
+          <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2">
             <div className="flex items-center gap-2">
               <Square className="h-4 w-4 text-slate-500" />
               <div>
-                <p className="text-[11px] font-bold">OSU Parking Structure 1</p>
+                <p className="text-[11px] font-bold text-slate-950">
+                  OSU Parking Structure 1
+                </p>
                 <p className="text-[9px] text-slate-500">1.2 mi · Garage</p>
               </div>
             </div>
@@ -162,86 +254,99 @@ export function MapScreen() {
   );
 }
 
+/* ---------------------------------------------------------------------------
+ * 2. Detail screen — facility overview, zone breakdown
+ * ------------------------------------------------------------------------ */
 export function DetailScreen() {
   const zones = [
-    { name: "Zone 1 · Live Camera", available: 20, total: 41, live: true },
-    { name: "Zone 2 · Visitor", available: 16, total: 30, live: false },
-    { name: "Zone 3 · General", available: 12, total: 20, live: false },
+    { name: "Zone 1", sub: "Live Camera", available: 20, total: 41, live: true },
+    { name: "Zone 2", sub: "Visitor", available: 16, total: 30, live: false },
+    { name: "Zone 3", sub: "General", available: 12, total: 20, live: false },
   ];
 
   return (
-    <div className="flex h-full flex-col bg-white text-slate-950">
+    <div className="flex h-full flex-col bg-[#f6f8fc] text-slate-950">
       <StatusBar />
-      <div className="flex items-center justify-between px-4 pt-3">
-        <button
-          type="button"
-          aria-label="Back"
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-        <p className="text-[11px] font-bold">Brighton Ski Resort</p>
-        <div className="h-8 w-8" />
-      </div>
+      <NavBar title="Brighton Ski Resort" eyebrow="Resort" />
 
       <div className="px-4 pt-3">
-        <div className="relative h-24 overflow-hidden rounded-xl bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-400 p-3 shadow-md">
-          <div className="absolute inset-0 opacity-20">
-            <svg viewBox="0 0 200 80" preserveAspectRatio="none" className="h-full w-full">
-              <polygon points="0,80 40,20 70,50 110,10 150,40 200,15 200,80" fill="white" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-500 p-4 shadow-lg shadow-blue-600/20">
+          <div className="absolute inset-0 opacity-25">
+            <svg
+              viewBox="0 0 200 80"
+              preserveAspectRatio="none"
+              className="h-full w-full"
+            >
+              <polygon
+                points="0,80 40,20 70,50 110,10 150,40 200,15 200,80"
+                fill="white"
+              />
             </svg>
           </div>
           <div className="relative flex items-start justify-between">
             <div>
               <p className="text-[9px] font-bold uppercase tracking-wider text-white/80">
-                Resort
+                Live availability
               </p>
-              <p className="mt-0.5 text-sm font-bold text-white">
-                Brighton Ski Resort
+              <p className="mt-0.5 text-[11px] font-medium text-white/85">
+                Big Cottonwood, UT
               </p>
-              <p className="text-[10px] text-white/80">Big Cottonwood, UT</p>
             </div>
-            <span className="flex items-center gap-1 rounded-full bg-white/20 px-2 py-0.5 text-[9px] font-bold text-white backdrop-blur">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
-              LIVE
-            </span>
+            <LiveBadge tone="white" />
           </div>
-          <div className="relative mt-2 flex items-end justify-between">
-            <p className="text-2xl font-black text-white">48</p>
-            <p className="mb-0.5 text-[10px] font-medium text-white/80">
-              of 91 spots open
+          <div className="relative mt-4 flex items-end gap-2">
+            <p className="text-4xl font-black leading-none text-white">48</p>
+            <p className="mb-1 text-[11px] font-semibold text-white/85">
+              of <span className="font-bold text-white">91</span> spots open
             </p>
+          </div>
+          <div className="relative mt-3 h-1.5 overflow-hidden rounded-full bg-white/20">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.round((48 / 91) * 100)}%` }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              className="h-full rounded-full bg-white"
+            />
           </div>
         </div>
       </div>
 
-      <div className="mt-3 flex-1 overflow-hidden px-4">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-          Zone breakdown
-        </p>
+      <div className="mt-4 flex-1 overflow-hidden px-4">
+        <div className="flex items-center justify-between">
+          <p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
+            Zone breakdown
+          </p>
+          <p className="text-[9px] font-medium text-slate-400">3 zones</p>
+        </div>
         <div className="mt-2 space-y-2">
           {zones.map((zone) => {
             const pct = Math.round((zone.available / zone.total) * 100);
             return (
               <div
                 key={zone.name}
-                className="rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-sm"
+                className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
-                    <p className="text-[11px] font-bold">{zone.name}</p>
+                    <p className="text-[11px] font-bold text-slate-950">
+                      {zone.name}
+                    </p>
+                    <span className="text-[9px] font-medium text-slate-500">
+                      · {zone.sub}
+                    </span>
                     {zone.live && (
-                      <span className="flex items-center gap-0.5 rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[8px] font-bold text-emerald-600">
-                        <span className="h-1 w-1 rounded-full bg-emerald-500" />
+                      <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-100 px-1.5 py-0.5 text-[8px] font-bold text-blue-700">
+                        <Camera className="h-2 w-2" />
                         AI
                       </span>
                     )}
                   </div>
                   <p className="text-[10px] font-bold text-slate-700">
-                    {zone.available}/{zone.total}
+                    <span className="text-emerald-600">{zone.available}</span>
+                    <span className="text-slate-400">/{zone.total}</span>
                   </p>
                 </div>
-                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
                   <motion.div
                     className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400"
                     initial={{ width: 0 }}
@@ -256,47 +361,109 @@ export function DetailScreen() {
       </div>
 
       <div className="px-4 pb-4 pt-3">
-        <button
-          type="button"
-          className="flex h-10 w-full items-center justify-center gap-1.5 rounded-lg bg-blue-600 text-[12px] font-bold text-white shadow-md"
-        >
+        <PrimaryButton>
           Pick a spot
           <ArrowUpRight className="h-3.5 w-3.5" />
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   );
 }
 
+/* ---------------------------------------------------------------------------
+ * 3. Spot picker — 3D-style isometric lot with car models
+ * ------------------------------------------------------------------------ */
+function CarModel({
+  tone = "occupied",
+  delay = 0,
+}: {
+  tone?: "occupied" | "selected";
+  delay?: number;
+}) {
+  const fill =
+    tone === "selected"
+      ? "from-blue-500 to-blue-700"
+      : "from-slate-500 to-slate-700";
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay }}
+      className="absolute inset-1 flex flex-col gap-[1px]"
+    >
+      {/* roof */}
+      <div className={`h-[42%] rounded-[3px] bg-gradient-to-b ${fill} shadow-md`} />
+      {/* windshield */}
+      <div className="mx-1 h-[10%] rounded-sm bg-cyan-200/40" />
+      {/* hood */}
+      <div className={`h-[42%] rounded-[3px] bg-gradient-to-b ${fill} shadow-md`} />
+      {/* headlights */}
+      <div className="absolute bottom-0.5 left-1/2 flex -translate-x-1/2 gap-0.5">
+        <span className="h-0.5 w-1.5 rounded-sm bg-amber-200/80" />
+        <span className="h-0.5 w-1.5 rounded-sm bg-amber-200/80" />
+      </div>
+    </motion.div>
+  );
+}
+
+function Stall({
+  state,
+  delay,
+}: {
+  state: "open" | "occupied" | "selected";
+  delay: number;
+}) {
+  const tint =
+    state === "selected"
+      ? "bg-blue-500/20 ring-2 ring-blue-500"
+      : state === "occupied"
+        ? "bg-slate-200/60"
+        : "bg-emerald-400/15 ring-1 ring-emerald-400/40";
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.35, delay }}
+      className={`relative aspect-[3/5] rounded-md ${tint}`}
+    >
+      {/* parking lines */}
+      <span className="absolute inset-y-0 left-0 w-px bg-white/70" />
+      <span className="absolute inset-y-0 right-0 w-px bg-white/70" />
+      <span className="absolute inset-x-0 bottom-0 h-px bg-white/70" />
+      {state === "occupied" && <CarModel tone="occupied" delay={delay + 0.05} />}
+      {state === "selected" && (
+        <>
+          <CarModel tone="selected" delay={delay + 0.05} />
+          <motion.span
+            initial={{ y: -3, opacity: 0 }}
+            animate={{ y: -7, opacity: 1 }}
+            transition={{ duration: 0.4, delay: delay + 0.2 }}
+            className="absolute -top-3 left-1/2 -translate-x-1/2 rounded bg-blue-600 px-1 py-0.5 text-[7px] font-black text-white shadow-md"
+          >
+            S02
+          </motion.span>
+        </>
+      )}
+    </motion.div>
+  );
+}
+
 export function SpotPickerScreen() {
-  const rows = 5;
-  const cols = 7;
-  const occupied = new Set([1, 4, 7, 9, 12, 17, 19, 22, 24, 28, 30, 33]);
-  const selected = 14;
+  // 0 = open, 1 = occupied, 2 = selected
+  const rowA = [1, 0, 1, 0, 1, 0, 1] as const;
+  const rowB = [0, 1, 0, 2, 0, 1, 0] as const;
+
+  const stateOf = (n: 0 | 1 | 2): "open" | "occupied" | "selected" =>
+    n === 0 ? "open" : n === 1 ? "occupied" : "selected";
 
   return (
-    <div className="flex h-full flex-col bg-[#f8fafc] text-slate-950">
+    <div className="flex h-full flex-col bg-gradient-to-b from-[#eef4ff] via-white to-[#f8fafc] text-slate-950">
       <StatusBar />
-      <div className="flex items-center justify-between px-4 pt-3">
-        <button
-          type="button"
-          aria-label="Back"
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-        <div className="text-center">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-blue-600">
-            Zone 1
-          </p>
-          <p className="text-[11px] font-bold">Pick a spot</p>
-        </div>
-        <div className="h-8 w-8" />
-      </div>
+      <NavBar title="Pick a spot" eyebrow="Zone 1 · 3D View" />
 
-      <div className="mx-4 mt-3 flex items-center justify-around rounded-lg border border-slate-200 bg-white px-3 py-2">
+      <div className="mx-4 mt-3 flex items-center justify-around rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
         <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-600">
-          <span className="h-2 w-2 rounded-sm bg-emerald-500" />
+          <span className="h-2 w-2 rounded-sm bg-emerald-400/70 ring-1 ring-emerald-400" />
           Open
         </div>
         <div className="flex items-center gap-1.5 text-[9px] font-medium text-slate-600">
@@ -310,63 +477,105 @@ export function SpotPickerScreen() {
       </div>
 
       <div className="flex-1 px-4 pt-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-100 via-slate-50 to-white p-3 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
             <p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
-              Lower Lot
+              Lower Lot · Zone 1
             </p>
-            <p className="text-[9px] font-bold text-emerald-600">20 open</p>
+            <p className="text-[9px] font-bold text-emerald-600">8 open</p>
           </div>
-          <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
-            {Array.from({ length: rows * cols }).map((_, idx) => {
-              const isOccupied = occupied.has(idx);
-              const isSelected = idx === selected;
-              return (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: idx * 0.012, duration: 0.25 }}
-                  className={`aspect-[3/4] rounded ${
-                    isSelected
-                      ? "bg-blue-600 ring-2 ring-blue-300"
-                      : isOccupied
-                        ? "bg-slate-300"
-                        : "bg-emerald-500/80"
-                  }`}
-                />
-              );
-            })}
+
+          {/* 3D scene */}
+          <div
+            className="mx-auto"
+            style={{ perspective: "700px", perspectiveOrigin: "50% 30%" }}
+          >
+            <div
+              className="relative"
+              style={{
+                transform: "rotateX(38deg) rotateZ(-2deg)",
+                transformStyle: "preserve-3d",
+              }}
+            >
+              {/* asphalt */}
+              <div className="absolute -inset-2 rounded-lg bg-gradient-to-b from-slate-300 to-slate-200" />
+
+              <div className="relative space-y-2">
+                {/* row A - facing center */}
+                <div className="grid grid-cols-7 gap-1">
+                  {rowA.map((state, idx) => (
+                    <Stall
+                      key={`a-${idx}`}
+                      state={stateOf(state)}
+                      delay={idx * 0.04}
+                    />
+                  ))}
+                </div>
+
+                {/* aisle with arrow */}
+                <div className="relative flex h-3 items-center">
+                  <div className="h-px flex-1 bg-slate-400/70" />
+                  <span className="mx-2 text-[8px] font-bold tracking-widest text-slate-400">
+                    AISLE
+                  </span>
+                  <div className="h-px flex-1 bg-slate-400/70" />
+                </div>
+
+                {/* row B */}
+                <div className="grid grid-cols-7 gap-1">
+                  {rowB.map((state, idx) => (
+                    <Stall
+                      key={`b-${idx}`}
+                      state={stateOf(state)}
+                      delay={0.3 + idx * 0.04}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* entrance arrow */}
+              <div className="mt-2 flex items-center justify-center gap-1 text-[8px] font-bold text-slate-500">
+                <span className="text-blue-600">▲</span> ENTRANCE
+              </div>
+            </div>
           </div>
-          <div className="mt-2 flex items-center justify-center text-[9px] font-bold text-slate-400">
-            ▲ ENTRANCE
-          </div>
+
+          {/* perspective overlay highlight */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_25%,rgba(37,99,235,0.10),transparent_60%)]" />
         </div>
 
-        <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50/70 px-3 py-2">
-          <p className="text-[9px] font-bold uppercase tracking-wider text-blue-600">
-            Selected
-          </p>
-          <div className="mt-1 flex items-center justify-between">
-            <p className="text-[12px] font-bold">Spot S02 · Zone 1</p>
-            <p className="text-[10px] font-medium text-slate-500">~2 min walk</p>
+        <div className="mt-3 rounded-xl border border-blue-200 bg-blue-50/70 px-3 py-2.5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-wider text-blue-600">
+                Selected
+              </p>
+              <p className="mt-0.5 text-[12px] font-bold text-slate-950">
+                Spot S02 · Zone 1
+              </p>
+            </div>
+            <p className="text-right text-[9px] font-medium text-slate-500">
+              ~2 min
+              <br />
+              walk
+            </p>
           </div>
         </div>
       </div>
 
       <div className="px-4 pb-4 pt-3">
-        <button
-          type="button"
-          className="flex h-10 w-full items-center justify-center gap-1.5 rounded-lg bg-blue-600 text-[12px] font-bold text-white shadow-md"
-        >
+        <PrimaryButton>
           Navigate to S02
           <Navigation className="h-3.5 w-3.5" />
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   );
 }
 
+/* ---------------------------------------------------------------------------
+ * 4. Navigation screen
+ * ------------------------------------------------------------------------ */
 export function NavigationScreen() {
   return (
     <div className="flex h-full flex-col bg-[#0b1220] text-white">
@@ -400,24 +609,28 @@ export function NavigationScreen() {
             strokeWidth="6"
             fill="none"
             strokeLinecap="round"
-            strokeDasharray="0 1"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
-            transition={{ duration: 2.4, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+            transition={{
+              duration: 2.4,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "reverse",
+            }}
           />
         </svg>
 
         <div className="absolute left-1/2 top-[78%] flex h-9 w-9 -translate-x-1/2 items-center justify-center">
           <span className="absolute h-9 w-9 animate-ping rounded-full bg-blue-500/40" />
           <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 ring-2 ring-white">
-            <Circle className="h-2 w-2 fill-white text-white" />
+            <span className="h-2 w-2 rounded-full bg-white" />
           </span>
         </div>
         <div className="absolute left-[52%] top-[14%] flex flex-col items-center">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-white">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 ring-2 ring-white shadow-lg shadow-blue-500/30">
             <CheckCircle2 className="h-4 w-4 text-white" />
           </div>
-          <div className="mt-1 rounded bg-emerald-500 px-1.5 py-0.5 text-[8px] font-bold text-white">
+          <div className="mt-1 rounded bg-blue-500 px-1.5 py-0.5 text-[8px] font-bold text-white">
             S02
           </div>
         </div>
@@ -451,9 +664,9 @@ export function NavigationScreen() {
             <p className="text-[9px] text-slate-400">ETA · 0.4 mi</p>
           </div>
         </div>
-        <div className="mt-2 flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2 py-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          <p className="text-[9px] font-bold text-emerald-300">
+        <div className="mt-2 flex items-center gap-1 rounded-lg bg-blue-500/15 px-2 py-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
+          <p className="text-[9px] font-bold text-blue-200">
             Spot still available · just confirmed by camera
           </p>
         </div>
@@ -462,71 +675,106 @@ export function NavigationScreen() {
   );
 }
 
+/* ---------------------------------------------------------------------------
+ * 5. Confirmation screen — blue (brand) + subtle blue confetti
+ * ------------------------------------------------------------------------ */
+function Confetti() {
+  const pieces = [
+    { left: "12%", top: "18%", size: 6, delay: 0, color: "bg-blue-500" },
+    { left: "28%", top: "8%", size: 4, delay: 0.15, color: "bg-cyan-400" },
+    { left: "70%", top: "12%", size: 5, delay: 0.05, color: "bg-blue-400" },
+    { left: "84%", top: "22%", size: 6, delay: 0.25, color: "bg-blue-600" },
+    { left: "20%", top: "30%", size: 3, delay: 0.35, color: "bg-cyan-300" },
+    { left: "78%", top: "32%", size: 4, delay: 0.4, color: "bg-blue-300" },
+    { left: "50%", top: "6%", size: 5, delay: 0.1, color: "bg-blue-500" },
+    { left: "60%", top: "26%", size: 3, delay: 0.5, color: "bg-cyan-500" },
+    { left: "8%", top: "32%", size: 4, delay: 0.45, color: "bg-blue-400" },
+  ];
+
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      {pieces.map((p, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, y: 0, rotate: 0 }}
+          animate={{
+            opacity: [0, 1, 1, 0],
+            y: [0, -14, 8, 22],
+            rotate: [0, 90, 180, 270],
+          }}
+          transition={{
+            duration: 2.2,
+            delay: 0.4 + p.delay,
+            repeat: Infinity,
+            repeatDelay: 1.4,
+            ease: "easeOut",
+          }}
+          className={`absolute rounded-sm ${p.color}`}
+          style={{
+            left: p.left,
+            top: p.top,
+            width: p.size,
+            height: p.size,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function ConfirmationScreen() {
   return (
-    <div className="flex h-full flex-col bg-[#f5f8ff] px-5 pb-5 pt-2 text-slate-950">
+    <div className="relative flex h-full flex-col bg-[#f5f8ff] text-slate-950">
       <StatusBar />
-      <div className="mt-3 flex items-center justify-between">
-        <button
-          type="button"
-          aria-label="Back"
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-        <div className="text-center">
-          <p className="text-[10px] font-bold uppercase text-blue-600">
-            Parked
-          </p>
-          <p className="text-sm font-bold">Brighton Ski Resort</p>
-        </div>
-        <div className="h-9 w-9" />
-      </div>
+      <NavBar title="Brighton Ski Resort" eyebrow="Parked" />
+      <Confetti />
 
-      <div className="mt-4 flex flex-1 flex-col items-center justify-center text-center">
+      <div className="relative mt-2 flex flex-1 flex-col items-center justify-center px-5 text-center">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 220, damping: 18 }}
-          className="relative mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/25"
+          className="relative mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-600/30"
         >
-          <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/40" />
+          <span className="absolute inset-0 animate-ping rounded-full bg-blue-400/40" />
+          <span className="absolute -inset-2 rounded-full border border-blue-400/30" />
           <CheckCircle2 className="relative h-10 w-10" />
         </motion.div>
-        <h3 className="text-2xl font-black">You are parked.</h3>
-        <p className="mt-2 max-w-[210px] text-sm leading-relaxed text-slate-500">
+        <h3 className="text-2xl font-black text-slate-950">You are parked.</h3>
+        <p className="mt-2 max-w-[210px] text-[12px] leading-relaxed text-slate-500">
           Spot S02 in Zone 1 is confirmed and synced to the operator view.
         </p>
 
-        <div className="mt-8 w-full rounded-lg border border-slate-200 bg-white p-4 text-left shadow-sm">
+        <div className="mt-7 w-full rounded-xl border border-slate-200 bg-white p-4 text-left shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-blue-600" />
-              <span className="text-xs font-semibold text-slate-500">
+              <span className="text-[11px] font-semibold text-slate-500">
                 Destination
               </span>
             </div>
-            <span className="text-sm font-bold">Zone 1</span>
+            <span className="text-[12px] font-bold text-slate-950">Zone 1</span>
           </div>
           <div className="flex items-center justify-between pt-3">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-blue-600" />
-              <span className="text-xs font-semibold text-slate-500">
+              <span className="text-[11px] font-semibold text-slate-500">
                 Session
               </span>
             </div>
-            <span className="font-mono text-sm font-bold">00:14:32</span>
+            <span className="font-mono text-[12px] font-bold text-slate-950">
+              00:14:32
+            </span>
           </div>
         </div>
       </div>
 
-      <button
-        type="button"
-        className="mt-5 flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-600/25"
-      >
-        <CheckCircle2 className="h-4 w-4" />
-        Confirmed
-      </button>
+      <div className="px-5 pb-5 pt-4">
+        <PrimaryButton>
+          <CheckCircle2 className="h-4 w-4" />
+          Confirmed
+        </PrimaryButton>
+      </div>
     </div>
   );
 }

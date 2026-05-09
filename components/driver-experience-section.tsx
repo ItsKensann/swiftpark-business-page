@@ -2,7 +2,7 @@
 
 import { type ComponentType, type ReactNode, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { Navigation, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import {
   ConfirmationScreen,
   DetailScreen,
@@ -150,11 +150,10 @@ export function DriverExperienceSection() {
             Driver Experience
           </p>
           <h2 className="mt-4 text-4xl font-bold text-slate-950 md:text-5xl">
-            Find, choose, navigate, park.
+            From search to parked, in seconds.
           </h2>
           <p className="mt-5 text-lg leading-relaxed text-slate-600">
-            A simple driver flow powered by the same real-time camera data
-            operators use to manage the facility.
+            Four taps. Zero circling. Here&rsquo;s the flow drivers see.
           </p>
         </motion.div>
       </div>
@@ -173,7 +172,7 @@ export function DriverExperienceSection() {
             <div>
               <div className="mb-10 inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700">
                 <Search className="h-4 w-4" />
-                SwiftPark driver app
+                Live App Demo
               </div>
 
               <div className="space-y-5">
@@ -243,33 +242,6 @@ export function DriverExperienceSection() {
                     </motion.div>
                   </AnimatePresence>
                 </PhoneFrame>
-
-                <motion.div
-                  className="absolute -right-12 top-16 z-30 hidden rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-xl xl:block"
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
-                    <Navigation className="h-4 w-4 text-blue-600" />
-                    Live guidance
-                  </div>
-                  <p className="mt-1 text-xs text-slate-500">
-                    Updates as occupancy changes
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  className="absolute -bottom-4 -left-10 z-30 hidden rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-xl xl:block"
-                  animate={{ y: [0, 6, 0] }}
-                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
-                >
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
-                    Synced
-                  </p>
-                  <p className="mt-1 text-sm font-bold text-slate-950">
-                    Operator view updated
-                  </p>
-                </motion.div>
               </div>
             </div>
           </div>
