@@ -8,143 +8,95 @@ const steps = [
   {
     icon: Camera,
     number: "01",
-    title: "Connect your cameras",
+    title: "Connect existing cameras",
     description:
-      "Works with the IP cameras you already have installed. No new hardware, no contractors, no downtime.",
-    detail: "Compatible with 99% of ONVIF-compliant IP cameras",
-    color: "from-blue-50 to-white",
-    iconBg: "bg-blue-100",
-    iconColor: "text-primary",
+      "Use the camera infrastructure already installed at your facility.",
   },
   {
     icon: Cpu,
     number: "02",
-    title: "We handle the rest",
+    title: "Detect occupancy",
     description:
-      "Our computer vision model detects vehicles and tracks occupancy automatically — all in the background.",
-    detail: "94.7% detection accuracy across all lighting conditions",
-    color: "from-blue-50 to-white",
-    iconBg: "bg-blue-100",
-    iconColor: "text-primary",
+      "Computer vision turns vehicle presence into live spot and zone data.",
   },
   {
     icon: LayoutDashboard,
     number: "03",
-    title: "Go live",
+    title: "Launch app + dashboard",
     description:
-      "Operators get a live dashboard. Drivers see availability in real time before they even leave home.",
-    detail: "Average time-to-live: under 4 hours after sign-up",
-    color: "from-blue-50 to-white",
-    iconBg: "bg-blue-100",
-    iconColor: "text-primary",
+      "Drivers get guidance. Operators get real-time visibility.",
   },
 ];
 
 export function HowItWorksSection() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-120px" });
 
   return (
-    <section id="how-it-works" className="py-24 md:py-32 px-6 bg-muted/30">
-      <div className="max-w-6xl mx-auto" ref={ref}>
-        {/* Header */}
+    <section id="how-it-works" ref={ref} className="bg-slate-50 py-24 md:py-32">
+      <div className="mx-auto max-w-7xl px-6">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-16"
+          initial={{ opacity: 0, y: 28 }}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto max-w-3xl text-center"
         >
-          <span className="inline-block text-xs font-semibold uppercase tracking-widest text-primary mb-3">
-            How it works
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight text-balance">
-            Up and running in minutes
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">
+            How It Works
+          </p>
+          <h2 className="mt-4 text-4xl font-bold text-slate-950 md:text-5xl">
+            From camera to clarity in three steps.
           </h2>
-          <p className="mt-4 text-muted-foreground text-lg max-w-xl mx-auto text-balance">
-            No installation crew. No new infrastructure. Just connect and go.
+          <p className="mt-5 text-lg leading-relaxed text-slate-600">
+            A pilot can start with the infrastructure already on site and grow
+            into a full driver and operator experience.
           </p>
         </motion.div>
 
-        {/* Steps */}
-        <div className="relative">
-          {/* Vertical timeline line */}
-          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-border md:-translate-x-px hidden sm:block" />
+        <div className="mt-14 grid gap-4 md:grid-cols-3">
+          {steps.map(({ icon: Icon, number, title, description }, index) => (
+            <motion.article
+              key={number}
+              initial={{ opacity: 0, y: 28 }}
+              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+              transition={{
+                duration: 0.55,
+                ease: [0.22, 1, 0.36, 1],
+                delay: index * 0.08,
+              }}
+              className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/0 to-transparent transition-all duration-500 group-hover:via-blue-500" />
+              <motion.span
+                aria-hidden
+                initial={{ x: "-100%" }}
+                animate={
+                  inView ? { x: ["-100%", "100%"] } : { x: "-100%" }
+                }
+                transition={{
+                  duration: 2.4,
+                  ease: "easeInOut",
+                  delay: 0.4 + index * 0.18,
+                  repeat: Infinity,
+                  repeatDelay: 3.2,
+                }}
+                className="pointer-events-none absolute left-0 top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-transparent"
+              />
 
-          <div className="flex flex-col gap-12">
-            {steps.map((step, i) => {
-              const Icon = step.icon;
-              const isEven = i % 2 === 0;
-
-              return (
-                <motion.div
-                  key={step.number}
-                  initial={{ opacity: 0, x: isEven ? -40 : 40 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{
-                    duration: 0.65,
-                    ease: [0.22, 1, 0.36, 1],
-                    delay: 0.15 + i * 0.15,
-                  }}
-                  className={`relative flex flex-col md:flex-row ${
-                    isEven ? "md:flex-row" : "md:flex-row-reverse"
-                  } items-center gap-8`}
-                >
-                  {/* Card */}
-                  <div
-                    className={`w-full md:w-5/12 ${isEven ? "md:text-right" : "md:text-left"}`}
-                  >
-                    <div className="bg-white rounded-2xl border border-border p-7 shadow-sm hover:shadow-md transition-shadow duration-300 group">
-                      <div
-                        className={`flex items-center gap-3 mb-4 ${
-                          isEven ? "md:flex-row-reverse" : ""
-                        }`}
-                      >
-                        <div
-                          className={`w-12 h-12 rounded-xl ${step.iconBg} flex items-center justify-center flex-shrink-0`}
-                        >
-                          <Icon className={`w-6 h-6 ${step.iconColor}`} />
-                        </div>
-                        <span className="text-4xl font-black text-border group-hover:text-primary/20 transition-colors duration-300 leading-none">
-                          {step.number}
-                        </span>
-                      </div>
-                      <h3 className="text-lg font-semibold text-foreground mb-2">
-                        {step.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                        {step.description}
-                      </p>
-                      {/* <div className="inline-flex items-center gap-1.5 text-xs font-medium text-primary bg-accent px-2.5 py-1 rounded-full border border-primary/15">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        {step.detail}
-                      </div> */}
-                    </div>
-                  </div>
-
-                  {/* Center dot on timeline */}
-                  <div className="hidden md:flex w-2/12 justify-center relative z-10">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={inView ? { scale: 1 } : {}}
-                      transition={{
-                        delay: 0.3 + i * 0.15,
-                        type: "spring",
-                        stiffness: 300,
-                      }}
-                      className="w-10 h-10 rounded-full bg-primary border-4 border-white shadow-md flex items-center justify-center"
-                    >
-                      <span className="text-primary-foreground text-[11px] font-bold">
-                        {i + 1}
-                      </span>
-                    </motion.div>
-                  </div>
-
-                  {/* Spacer for opposite side */}
-                  <div className="hidden md:block w-5/12" />
-                </motion.div>
-              );
-            })}
-          </div>
+              <div className="flex items-center justify-between">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-blue-100/60 text-blue-600 ring-1 ring-inset ring-blue-100">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <span className="text-4xl font-black text-slate-100">
+                  {number}
+                </span>
+              </div>
+              <h3 className="mt-6 text-xl font-bold text-slate-950">{title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                {description}
+              </p>
+            </motion.article>
+          ))}
         </div>
       </div>
     </section>

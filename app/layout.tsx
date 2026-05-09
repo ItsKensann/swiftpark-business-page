@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-
 export const metadata: Metadata = {
-  title: "SwiftPark",
+  title: "SwiftPark | Real-Time Parking Intelligence",
   description:
-    "SwiftPark connects to your existing cameras and gives operators live occupancy data and gives drivers the parking visibility they've always needed.",
+    "SwiftPark turns existing cameras into real-time parking intelligence for drivers and facility operators.",
   icons: {
     icon: [
       {
@@ -34,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} bg-background`}>
+    <html lang="en" className="bg-background">
       <body className="font-sans antialiased">
         {children}
         {process.env.NODE_ENV === "production" && <Analytics />}
