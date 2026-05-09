@@ -1,64 +1,58 @@
 "use client";
 
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ComponentType, type ReactNode, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { Navigation, Search } from "lucide-react";
 import {
-  CheckCircle2,
-  ChevronLeft,
-  Clock,
-  MapPin,
-  Navigation,
-  Search,
-} from "lucide-react";
+  ConfirmationScreen,
+  DetailScreen,
+  MapScreen,
+  NavigationScreen,
+  SpotPickerScreen,
+} from "@/components/app-screens";
 
 type DriverStep = {
   eyebrow: string;
   title: string;
   description: string;
-  image?: string;
-  alt?: string;
-  confirmation?: boolean;
+  Screen: ComponentType;
 };
 
 const driverSteps: DriverStep[] = [
   {
     eyebrow: "Find parking",
-    title: "Open the map and see what is available.",
+    title: "Open the map and see live availability.",
     description:
-      "Drivers start with live availability across nearby lots, zones, and campus destinations.",
-    image: "/screen-1.png",
-    alt: "SwiftPark map showing Brighton Ski Resort availability",
+      "Open the map and see live availability across nearby garages, lots, and campus destinations.",
+    Screen: MapScreen,
   },
   {
     eyebrow: "View availability",
     title: "Check the lot before arriving.",
     description:
-      "Each location shows open spaces, zone breakdowns, and live camera status in one clean view.",
-    image: "/screen-2.png",
-    alt: "SwiftPark Brighton Ski Resort detail screen",
+      "Compare open spaces, zone breakdowns, and live camera status before arriving.",
+    Screen: DetailScreen,
   },
   {
     eyebrow: "Select a spot",
-    title: "Choose the best open space.",
+    title: "Pick the best open space.",
     description:
-      "A visual spot map helps drivers pick the right zone without guessing or circling.",
-    image: "/screen-3.png",
-    alt: "SwiftPark 3D spot map screen",
+      "Pick the best open space from a clear visual spot map.",
+    Screen: SpotPickerScreen,
   },
   {
     eyebrow: "Navigate",
     title: "Route directly to the destination.",
     description:
-      "SwiftPark turns availability into turn-by-turn guidance toward the selected zone and spot.",
-    image: "/screen-4.png",
-    alt: "SwiftPark navigation screen",
+      "Turn availability into guidance toward the selected zone and spot.",
+    Screen: NavigationScreen,
   },
   {
     eyebrow: "Confirm parked",
     title: "Confirm the session in one tap.",
     description:
-      "Once parked, the driver confirms the spot and the operator dashboard updates with the same live data.",
-    confirmation: true,
+      "Confirm the session in one tap and sync the result back to the operator view.",
+    Screen: ConfirmationScreen,
   },
 ];
 
@@ -74,8 +68,8 @@ function PhoneFrame({ children, compact = false }: { children: ReactNode; compac
         compact ? "w-[224px] h-[444px]" : "w-[284px] h-[564px]"
       }`}
     >
-      <div className="absolute -inset-3 rounded-[2.5rem] bg-blue-500/10 blur-xl" />
-      <div className="relative h-full w-full overflow-hidden rounded-[2.25rem] border-[10px] border-slate-950 bg-slate-950 shadow-2xl shadow-slate-950/25">
+      <div className="absolute -inset-3 rounded-[2.5rem] bg-blue-500/15 blur-2xl" />
+      <div className="relative h-full w-full overflow-hidden rounded-[2.25rem] border-[10px] border-slate-950 bg-slate-950 shadow-2xl shadow-slate-950/30">
         <div className="absolute left-1/2 top-0 z-20 h-6 w-28 -translate-x-1/2 rounded-b-2xl bg-slate-950" />
         <div className="h-full w-full overflow-hidden rounded-[1.55rem] bg-white">
           {children}
@@ -86,91 +80,8 @@ function PhoneFrame({ children, compact = false }: { children: ReactNode; compac
   );
 }
 
-function ScreenImage({ step }: { step: DriverStep }) {
-  if (step.confirmation) {
-    return <ConfirmationScreen />;
-  }
-
-  return (
-    <img
-      src={step.image}
-      alt={step.alt ?? step.title}
-      className="h-full w-full object-cover object-top"
-      draggable={false}
-    />
-  );
-}
-
-function ConfirmationScreen() {
-  return (
-    <div className="flex h-full flex-col bg-[#f5f8ff] px-5 pb-5 pt-11 text-slate-950">
-      <div className="mb-5 flex items-center justify-between">
-        <button
-          type="button"
-          aria-label="Back"
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <div className="text-center">
-          <p className="text-[10px] font-bold uppercase text-blue-600">
-            Parked
-          </p>
-          <p className="text-sm font-bold">Brighton Ski Resort</p>
-        </div>
-        <div className="h-9 w-9 rounded-lg border border-slate-200 bg-white shadow-sm" />
-      </div>
-
-      <div className="mt-4 flex flex-1 flex-col items-center justify-center text-center">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 220, damping: 18 }}
-          className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500 text-white shadow-lg shadow-emerald-500/25"
-        >
-          <CheckCircle2 className="h-10 w-10" />
-        </motion.div>
-        <h3 className="text-2xl font-black">
-          You are parked.
-        </h3>
-        <p className="mt-2 max-w-[210px] text-sm leading-relaxed text-slate-500">
-          Spot S02 in Zone 1 is confirmed and synced to the operator view.
-        </p>
-
-        <div className="mt-8 w-full rounded-lg border border-slate-200 bg-white p-4 text-left shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-blue-600" />
-              <span className="text-xs font-semibold text-slate-500">
-                Destination
-              </span>
-            </div>
-            <span className="text-sm font-bold">Zone 1</span>
-          </div>
-          <div className="flex items-center justify-between pt-3">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-blue-600" />
-              <span className="text-xs font-semibold text-slate-500">
-                Session
-              </span>
-            </div>
-            <span className="font-mono text-sm font-bold">00:14:32</span>
-          </div>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 text-sm font-bold text-white shadow-lg shadow-blue-600/25"
-      >
-        <CheckCircle2 className="h-4 w-4" />
-        Confirmed
-      </button>
-    </div>
-  );
-}
-
 function MobileStep({ step, index }: { step: DriverStep; index: number }) {
+  const Screen = step.Screen;
   return (
     <motion.article
       variants={fadeIn}
@@ -181,7 +92,7 @@ function MobileStep({ step, index }: { step: DriverStep; index: number }) {
       className="grid gap-6 rounded-lg border border-slate-200 bg-white p-5 shadow-sm"
     >
       <PhoneFrame compact>
-        <ScreenImage step={step} />
+        <Screen />
       </PhoneFrame>
       <div>
         <p className="text-xs font-bold uppercase text-blue-600">
@@ -222,6 +133,7 @@ export function DriverExperienceSection() {
   }, [screenIndex]);
 
   const activeStep = driverSteps[currentScreen];
+  const ActiveScreen = activeStep.Screen;
 
   return (
     <section id="driver" ref={containerRef} className="relative bg-white">
@@ -261,7 +173,7 @@ export function DriverExperienceSection() {
             <div>
               <div className="mb-10 inline-flex items-center gap-2 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700">
                 <Search className="h-4 w-4" />
-                Real SwiftPark app screens
+                SwiftPark driver app
               </div>
 
               <div className="space-y-5">
@@ -317,8 +229,23 @@ export function DriverExperienceSection() {
 
             <div className="flex justify-center">
               <div className="relative">
+                <PhoneFrame>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={activeStep.eyebrow}
+                      initial={{ opacity: 0, scale: 0.97, filter: "blur(8px)" }}
+                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, scale: 1.02, filter: "blur(8px)" }}
+                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                      className="h-full"
+                    >
+                      <ActiveScreen />
+                    </motion.div>
+                  </AnimatePresence>
+                </PhoneFrame>
+
                 <motion.div
-                  className="absolute -left-16 top-20 hidden rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-xl xl:block"
+                  className="absolute -right-12 top-16 z-30 hidden rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-xl xl:block"
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 >
@@ -331,20 +258,18 @@ export function DriverExperienceSection() {
                   </p>
                 </motion.div>
 
-                <PhoneFrame>
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={activeStep.eyebrow}
-                      initial={{ opacity: 0, scale: 0.97, filter: "blur(8px)" }}
-                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, scale: 1.02, filter: "blur(8px)" }}
-                      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                      className="h-full"
-                    >
-                      <ScreenImage step={activeStep} />
-                    </motion.div>
-                  </AnimatePresence>
-                </PhoneFrame>
+                <motion.div
+                  className="absolute -bottom-4 -left-10 z-30 hidden rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-xl xl:block"
+                  animate={{ y: [0, 6, 0] }}
+                  transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
+                    Synced
+                  </p>
+                  <p className="mt-1 text-sm font-bold text-slate-950">
+                    Operator view updated
+                  </p>
+                </motion.div>
               </div>
             </div>
           </div>

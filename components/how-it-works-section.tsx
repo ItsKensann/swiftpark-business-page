@@ -10,21 +10,21 @@ const steps = [
     number: "01",
     title: "Connect existing cameras",
     description:
-      "SwiftPark integrates with current IP camera infrastructure through ONVIF or RTSP. No new hardware, construction, or downtime.",
+      "Use the camera infrastructure already installed at your facility.",
   },
   {
     icon: Cpu,
     number: "02",
     title: "Detect occupancy",
     description:
-      "Computer vision models process feeds in real time and translate vehicle presence into open and occupied spot data.",
+      "Computer vision turns vehicle presence into live spot and zone data.",
   },
   {
     icon: LayoutDashboard,
     number: "03",
-    title: "Launch app and dashboard",
+    title: "Launch app + dashboard",
     description:
-      "Drivers see availability before they arrive. Operators monitor occupancy, alerts, camera health, and utilization analytics.",
+      "Drivers get guidance. Operators get real-time visibility.",
   },
 ];
 
@@ -64,10 +64,27 @@ export function HowItWorksSection() {
                 ease: [0.22, 1, 0.36, 1],
                 delay: index * 0.08,
               }}
-              className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
+              className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
             >
+              <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/0 to-transparent transition-all duration-500 group-hover:via-blue-500" />
+              <motion.span
+                aria-hidden
+                initial={{ x: "-100%" }}
+                animate={
+                  inView ? { x: ["-100%", "100%"] } : { x: "-100%" }
+                }
+                transition={{
+                  duration: 2.4,
+                  ease: "easeInOut",
+                  delay: 0.4 + index * 0.18,
+                  repeat: Infinity,
+                  repeatDelay: 3.2,
+                }}
+                className="pointer-events-none absolute left-0 top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-transparent"
+              />
+
               <div className="flex items-center justify-between">
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-blue-100/60 text-blue-600 ring-1 ring-inset ring-blue-100">
                   <Icon className="h-5 w-5" />
                 </div>
                 <span className="text-4xl font-black text-slate-100">

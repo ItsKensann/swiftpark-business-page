@@ -30,8 +30,10 @@ export function CameraDetectionDemo({
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="relative"
     >
-      <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-950 shadow-2xl shadow-slate-950/40">
-        <div className="flex items-center justify-between border-b border-white/10 bg-slate-900 px-4 py-3">
+      <div className="absolute -inset-6 rounded-3xl bg-blue-500/15 blur-3xl" />
+
+      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-slate-950 shadow-2xl shadow-slate-950/60">
+        <div className="flex items-center justify-between border-b border-white/10 bg-slate-900/80 px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex gap-1.5">
               <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
@@ -48,21 +50,6 @@ export function CameraDetectionDemo({
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
             </span>
             LIVE
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 bg-slate-950 px-4 py-3">
-          <div>
-            <p className="font-mono text-xs uppercase tracking-[0.16em] text-slate-500">
-              Camera feed
-            </p>
-            <p className="mt-1 text-sm font-semibold text-white">
-              {cameraLabel}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-3 py-2 text-xs font-bold text-emerald-300">
-            <CheckCircle2 className="h-4 w-4" />
-            Detecting vehicles
           </div>
         </div>
 
@@ -87,11 +74,28 @@ export function CameraDetectionDemo({
             </div>
           )}
 
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-slate-950/15" />
-          <div className="pointer-events-none absolute left-4 top-4 rounded-lg border border-white/10 bg-black/55 px-3 py-2 backdrop-blur">
-            <div className="flex items-center gap-2 font-mono text-xs text-white">
-              <RadioTower className="h-3.5 w-3.5 text-blue-300" />
-              YOLO detection overlay
+          <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-lg border border-white/10 bg-black/55 px-3 py-1.5 backdrop-blur">
+            <RadioTower className="h-3.5 w-3.5 text-blue-300" />
+            <div>
+              <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-slate-300">
+                Camera feed
+              </p>
+              <p className="text-[11px] font-semibold text-white">
+                {cameraLabel}
+              </p>
+            </div>
+          </div>
+
+          <div className="pointer-events-none absolute right-3 top-3 flex items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-400/15 px-2.5 py-1 text-[10px] font-bold text-emerald-200 backdrop-blur">
+            <CheckCircle2 className="h-3 w-3" />
+            YOLO · detecting
+          </div>
+
+          <div className="pointer-events-none absolute bottom-3 left-3 right-3 flex items-end justify-between">
+            <div className="rounded-lg border border-white/10 bg-black/55 px-2.5 py-1.5 backdrop-blur">
+              <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-slate-400">
+                Existing camera · zero new hardware
+              </p>
             </div>
           </div>
         </div>

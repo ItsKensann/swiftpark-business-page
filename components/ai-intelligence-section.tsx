@@ -75,12 +75,12 @@ export function AiIntelligenceSection() {
               </div>
               <div>
                 <p className="font-semibold text-white">
-                  Brighton Ski Resort proof point
+                  Brighton Ski Resort · Zone 1
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-slate-300">
-                  The current product flow shows Brighton Ski Resort Zone 1
-                  with a live camera source and spot availability, the same
-                  context used in the detection clip.
+                  An existing on-site camera streams to SwiftPark. YOLO
+                  detection turns that feed into live spot and zone availability
+                  for drivers and operators.
                 </p>
               </div>
             </div>

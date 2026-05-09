@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { ArrowRight, CheckCircle2, Play } from "lucide-react";
+import { MapScreen } from "@/components/app-screens";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -13,7 +14,7 @@ function MiniDashboard() {
   const bars = [48, 62, 45, 78, 88, 72, 55];
 
   return (
-    <div className="w-[520px] max-w-[82vw] overflow-hidden rounded-lg border border-slate-800 bg-slate-950 shadow-2xl shadow-slate-950/20">
+    <div className="w-[520px] max-w-[82vw] overflow-hidden rounded-lg border border-slate-800 bg-slate-950 shadow-2xl shadow-slate-950/30">
       <div className="flex items-center gap-2 border-b border-white/10 bg-slate-900 px-4 py-3">
         <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
         <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
@@ -30,7 +31,11 @@ function MiniDashboard() {
             </p>
             <p className="mt-1 font-bold text-white">Live occupancy</p>
           </div>
-          <span className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
+          <span className="flex items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-70" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            </span>
             LIVE
           </span>
         </div>
@@ -57,10 +62,16 @@ function MiniDashboard() {
           </div>
           <div className="flex h-24 items-end gap-2">
             {bars.map((height, index) => (
-              <div
+              <motion.div
                 key={index}
+                initial={{ height: 0 }}
+                animate={{ height: `${height}%` }}
+                transition={{
+                  duration: 0.8,
+                  ease: [0.22, 1, 0.36, 1],
+                  delay: 0.6 + index * 0.05,
+                }}
                 className="flex-1 rounded-t bg-gradient-to-t from-blue-600 to-cyan-300"
-                style={{ height: `${height}%` }}
               />
             ))}
           </div>
@@ -72,13 +83,15 @@ function MiniDashboard() {
 
 function HeroPhone() {
   return (
-    <div className="relative h-[500px] w-[252px] overflow-hidden rounded-[2.1rem] border-[9px] border-slate-950 bg-slate-950 shadow-2xl shadow-slate-950/30">
-      <div className="absolute left-1/2 top-0 z-20 h-6 w-24 -translate-x-1/2 rounded-b-2xl bg-slate-950" />
-      <img
-        src="/screen-1.png"
-        alt="SwiftPark app map showing Brighton Ski Resort availability"
-        className="h-full w-full rounded-[1.45rem] object-cover object-top"
-      />
+    <div className="relative h-[500px] w-[252px]">
+      <div className="absolute -inset-3 rounded-[2.5rem] bg-blue-500/20 blur-2xl" />
+      <div className="relative h-full w-full overflow-hidden rounded-[2.1rem] border-[9px] border-slate-950 bg-slate-950 shadow-2xl shadow-slate-950/40">
+        <div className="absolute left-1/2 top-0 z-20 h-6 w-24 -translate-x-1/2 rounded-b-2xl bg-slate-950" />
+        <div className="h-full w-full overflow-hidden rounded-[1.45rem] bg-white">
+          <MapScreen />
+        </div>
+        <div className="absolute bottom-2 left-1/2 z-20 h-1 w-20 -translate-x-1/2 rounded-full bg-white/30" />
+      </div>
     </div>
   );
 }
@@ -100,6 +113,8 @@ export function HeroSection() {
           backgroundSize: "44px 44px",
         }}
       />
+      <div className="absolute -left-32 top-40 h-72 w-72 rounded-full bg-blue-400/20 blur-3xl" />
+      <div className="absolute -right-20 top-10 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl" />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 pb-20 lg:grid-cols-[0.9fr_1.1fr] lg:pb-24">
         <motion.div
@@ -115,7 +130,10 @@ export function HeroSection() {
           </div>
 
           <h1 className="mt-6 text-5xl font-black leading-[1.05] text-slate-950 md:text-7xl">
-            Real-time parking intelligence. Zero new hardware.
+            Real-time parking intelligence.{" "}
+            <span className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 bg-clip-text text-transparent">
+              Zero new hardware.
+            </span>
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600 md:text-xl">
             SwiftPark connects to your existing cameras and gives operators
@@ -163,9 +181,13 @@ export function HeroSection() {
           className="relative flex min-h-[540px] items-center justify-center lg:justify-end"
         >
           <div className="relative">
-            <div className="absolute -left-40 top-10 hidden lg:block">
+            <motion.div
+              className="absolute -left-40 top-10 hidden lg:block"
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            >
               <MiniDashboard />
-            </div>
+            </motion.div>
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
